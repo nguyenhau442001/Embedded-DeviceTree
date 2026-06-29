@@ -30,6 +30,7 @@ Goal: master the Linux kernel Device Tree subsystem end-to-end — not just DTS 
 
 **Documents:**
 - [ ] [rpi-setup.md](00-foundations/rpi-setup.md)
+- [ ] [cross-compile-setup.md](00-foundations/cross-compile-setup.md)
 - [ ] [boot-flow-notes.md](00-foundations/boot-flow-notes.md)
 
 ---
@@ -133,6 +134,7 @@ Embedded-DeviceTree/
 ├── README.md
 ├── 00-foundations/
 │   ├── rpi-setup.md
+│   ├── cross-compile-setup.md
 │   └── boot-flow-notes.md
 ├── 01-syntax/
 │   └── syntax-notes.md
