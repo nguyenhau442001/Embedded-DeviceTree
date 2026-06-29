@@ -47,6 +47,7 @@ Goal: master the Linux kernel Device Tree subsystem end-to-end — not just DTS 
 
 **Documents:**
 - [ ] [syntax-notes.md](01-syntax/syntax-notes.md)
+- [ ] [dt-properties-gpio.md](01-syntax/dt-properties-gpio.md)
 
 ---
 
@@ -137,7 +138,8 @@ Embedded-DeviceTree/
 │   ├── cross-compile-setup.md
 │   └── boot-flow-notes.md
 ├── 01-syntax/
-│   └── syntax-notes.md
+│   ├── syntax-notes.md
+│   └── dt-properties-gpio.md
 ├── 02-custom-binding/
 │   └── binding-notes.md
 ├── 03-debugging/
