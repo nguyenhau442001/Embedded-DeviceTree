@@ -48,6 +48,7 @@ Goal: master the Linux kernel Device Tree subsystem end-to-end — not just DTS 
 **Documents:**
 - [ ] [syntax-notes.md](01-syntax/syntax-notes.md)
 - [ ] [dt-properties-gpio.md](01-syntax/dt-properties-gpio.md)
+- [ ] [rpi4-pinout.md](01-syntax/rpi4-pinout.md)
 
 ---
 
@@ -139,7 +140,8 @@ Embedded-DeviceTree/
 │   └── boot-flow-notes.md
 ├── 01-syntax/
 │   ├── syntax-notes.md
-│   └── dt-properties-gpio.md
+│   ├── dt-properties-gpio.md
+│   └── rpi4-pinout.md
 ├── 02-custom-binding/
 │   └── binding-notes.md
 ├── 03-debugging/
