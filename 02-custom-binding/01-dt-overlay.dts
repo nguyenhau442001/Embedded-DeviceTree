@@ -1,0 +1,30 @@
+/dts-v1/;
+/plugin/;
+
+/ {
+	compatible = "brcm,bcm2711";
+
+	/*
+	 * Step 1 — tell the Pi's GPIO controller how to configure our pin.
+	 *
+	 * We are adding a subnode into &gpio (the existing GPIO controller).
+	 * This subnode declares:
+	 *   - which pin we want (BCM17 = physical pin 11)
+	 *   - what function (output)
+	 *   - whether to enable a pull resistor (none)
+	 *
+	 * This does NOT yet create a device or load any driver.
+	 * It only registers a named pin configuration "mydev_pins"
+	 * that our device node will reference later.
+	 */
+	fragment@0 {
+		target = <&gpio>;		/* target the existing GPIO controller */
+		__overlay__ {
+			mydev_pins: mydev_pins {
+				brcm,pins     = <17>;	/* BCM17 = physical pin 11 */
+				brcm,function = <1>;	/* 1 = output              */
+				brcm,pull     = <0>;	/* 0 = no pull resistor    */
+			};
+		};
+	};
+};
