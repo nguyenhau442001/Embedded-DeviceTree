@@ -20,21 +20,26 @@ This installs:
 - `aarch64-elf-objcopy`, `aarch64-elf-objdump` — binary utilities
 - `aarch64-elf-as` — assembler
 
-Also install `dtc` for standalone DTS/DTB work:
+Also install `dtc` and GNU `make` — macOS ships `make` 3.81 which is too old for the kernel build system (requires 3.82+):
 
 ```bash
-brew install dtc
+brew install dtc make
 ```
 
 Verify:
 
 ```bash
 aarch64-elf-gcc --version
-# aarch64-elf-gcc (GCC) 14.x.x ...
+# aarch64-elf-gcc (GCC) 16.x.x ...
 
 dtc --version
-# Version DTC 1.7.x
+# Version DTC 1.8.x
+
+gmake --version
+# GNU Make 4.x.x
 ```
+
+Homebrew installs GNU make as `gmake` to avoid shadowing the system binary. Use `gmake` everywhere instead of `make` for kernel builds.
 
 ---
 
@@ -89,10 +94,10 @@ For Phase 1 and Phase 3 work you only need DTBs, not a full kernel image. This t
 cd ~/rpi-linux
 
 # Apply the default Pi 4 config
-make ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
+gmake ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
 
 # Build only the DTBs
-make ARCH=arm64 CROSS_COMPILE=aarch64-elf- dtbs -j$(sysctl -n hw.logicalcpu)
+gmake ARCH=arm64 CROSS_COMPILE=aarch64-elf- dtbs -j$(sysctl -n hw.logicalcpu)
 ```
 
 Output DTBs land in:
@@ -111,9 +116,9 @@ Needed when your driver changes require a new kernel module or Image:
 ```bash
 cd ~/rpi-linux
 
-make ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
+gmake ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
 
-make ARCH=arm64 CROSS_COMPILE=aarch64-elf- -j$(sysctl -n hw.logicalcpu) \
+gmake ARCH=arm64 CROSS_COMPILE=aarch64-elf- -j$(sysctl -n hw.logicalcpu) \
     Image modules dtbs
 ```
 
@@ -159,7 +164,7 @@ ssh pi@<pi-ip> "cat /proc/device-tree/model && echo"
 scp arch/arm64/boot/Image pi@<pi-ip>:/boot/firmware/kernel8.img
 
 # Install modules directly onto the Pi
-make ARCH=arm64 CROSS_COMPILE=aarch64-elf- \
+gmake ARCH=arm64 CROSS_COMPILE=aarch64-elf- \
     INSTALL_MOD_PATH=/tmp/rpi-modules \
     modules_install
 
@@ -221,12 +226,12 @@ export LIBRARY_PATH="$(brew --prefix openssl)/lib:$LIBRARY_PATH"
 export CPATH="$(brew --prefix openssl)/include:$CPATH"
 ```
 
-### `make[1]: *** No rule to make target 'scripts/basic/fixdep'`
+### `gmake[1]: *** No rule to make target 'scripts/basic/fixdep'`
 
 Run the config step first before building:
 
 ```bash
-make ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
+gmake ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
 ```
 
 ---
@@ -235,7 +240,7 @@ make ARCH=arm64 CROSS_COMPILE=aarch64-elf- bcm2711_defconfig
 
 ```bash
 # One-time setup
-brew install aarch64-elf-gcc dtc
+brew install aarch64-elf-gcc dtc make
 export ARCH=arm64 CROSS_COMPILE=aarch64-elf-
 
 # Clone Pi kernel
@@ -243,8 +248,8 @@ git clone --depth=1 https://github.com/raspberrypi/linux --branch rpi-6.6.y ~/rp
 
 # Build DTBs only
 cd ~/rpi-linux
-make bcm2711_defconfig
-make dtbs -j$(sysctl -n hw.logicalcpu)
+gmake bcm2711_defconfig
+gmake dtbs -j$(sysctl -n hw.logicalcpu)
 
 # Deploy to Pi
 scp arch/arm64/boot/dts/broadcom/bcm2711-rpi-4-b.dtb pi@<pi-ip>:/boot/firmware/
