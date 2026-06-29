@@ -65,6 +65,10 @@ Goal: master the Linux kernel Device Tree subsystem end-to-end — not just DTS 
 
 **Documents:**
 - [ ] [binding-notes.md](02-custom-binding/binding-notes.md)
+- [ ] [01-dt-overlay.dts](02-custom-binding/01-dt-overlay.dts)
+- [ ] [mydev-led-driver.c](02-custom-binding/mydev-led-driver.c)
+- [ ] [Makefile](02-custom-binding/Makefile)
+- [ ] [04-deploy-and-test.md](02-custom-binding/04-deploy-and-test.md)
 
 ---
 
@@ -143,7 +147,11 @@ Embedded-DeviceTree/
 │   ├── dt-properties-gpio.md
 │   └── rpi4-pinout.md
 ├── 02-custom-binding/
-│   └── binding-notes.md
+│   ├── binding-notes.md
+│   ├── 01-dt-overlay.dts
+│   ├── mydev-led-driver.c
+│   ├── Makefile
+│   └── 04-deploy-and-test.md
 ├── 03-debugging/
 │   └── debugging-notes.md
 ├── 04-media-topology/
