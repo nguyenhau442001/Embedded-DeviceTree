@@ -29,6 +29,7 @@ Goal: master the Linux kernel Device Tree subsystem end-to-end — not just DTS 
 **Repo milestone:** `00-foundations/boot-flow-notes.md` — a boot chain diagram plus a short writeup comparing one real upstream pre-DT board file against its modern DT-based equivalent.
 
 **Documents:**
+- [ ] [rpi-setup.md](00-foundations/rpi-setup.md)
 - [ ] [boot-flow-notes.md](00-foundations/boot-flow-notes.md)
 
 ---
@@ -131,10 +132,18 @@ Goal: master the Linux kernel Device Tree subsystem end-to-end — not just DTS 
 Embedded-DeviceTree/
 ├── README.md
 ├── 00-foundations/
+│   ├── rpi-setup.md
+│   └── boot-flow-notes.md
 ├── 01-syntax/
+│   └── syntax-notes.md
 ├── 02-custom-binding/
+│   └── binding-notes.md
 ├── 03-debugging/
+│   └── debugging-notes.md
 ├── 04-media-topology/
+│   └── media-topology-notes.md
 ├── 05-aosp-integration/
+│   └── aosp-integration-notes.md
 └── 06-upstream/
+    └── upstream-notes.md
 ```
