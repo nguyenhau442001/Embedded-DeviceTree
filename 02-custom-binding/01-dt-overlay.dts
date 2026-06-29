@@ -27,4 +27,41 @@
 			};
 		};
 	};
+
+	/*
+	 * Step 2 — describe our custom device.
+	 *
+	 * This adds a new node under the root (/).
+	 * The kernel sees compatible = "myvendor,mydev" and creates
+	 * a platform_device. Our driver (step 2) will match this
+	 * string and get called at probe time.
+	 */
+	fragment@1 {
+		target-path = "/";		/* add this node under root */
+		__overlay__ {
+			mydev: mydev@0 {
+				/* driver match string — must be identical in driver's of_match_table */
+				compatible = "myvendor,mydev";
+
+				/* "okay" = probe this device, "disabled" = skip it */
+				status = "okay";
+
+				/*
+				 * The GPIO our driver will control.
+				 * Format: <&controller  pin  flags>
+				 *   &gpio = the Pi's GPIO controller
+				 *   17    = BCM17
+				 *   0     = GPIO_ACTIVE_HIGH (0V = off, 3.3V = on)
+				 */
+				ctrl-gpios = <&gpio 17 0>;
+
+				/* apply the pin config from fragment@0 before probe */
+				pinctrl-names = "default";
+				pinctrl-0 = <&mydev_pins>;
+
+				/* custom string our driver reads to name the sysfs file */
+				label = "mydev-led";
+			};
+		};
+	};
 };
