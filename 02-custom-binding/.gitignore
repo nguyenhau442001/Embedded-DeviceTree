@@ -1,0 +1,13 @@
+# Kernel module build artifacts
+*.ko
+*.o
+*.mod
+*.mod.c
+*.mod.o
+Module.symvers
+modules.order
+.tmp_versions/
+
+# DTB/DTBO compiled outputs
+*.dtb
+*.dtbo
