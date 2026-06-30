@@ -5,8 +5,8 @@
 | Task | Where |
 |---|---|
 | Compile the DTB overlay (`.dtbo`) | macOS |
-| Copy overlay + driver source to Pi | macOS → Pi via scp |
-| Build the kernel module (`.ko`) | Raspberry Pi |
+| Build the kernel module (`.ko`) | macOS via Docker |
+| Copy overlay + `.ko` to Pi | macOS → Pi via scp |
 | Load overlay + module, test | Raspberry Pi |
 
 ---
@@ -29,7 +29,59 @@ ls -lh mydev-led.dtbo
 
 ---
 
-## Step 2 — Copy Files to the Pi
+## Step 2 — Build the Kernel Module on macOS via Docker
+
+Docker runs a Linux container on macOS which has all the Linux host headers
+needed to compile kernel modules. The output files are written back to your
+local directory via a volume mount (`-v $(pwd):/build`).
+
+### One-time: build the Docker image (~5–10 min, only needed once)
+
+```bash
+cd 02-custom-binding
+docker build -t mydev-led-builder .
+```
+
+### Build the `.ko` (run this every time you change the driver source)
+
+```bash
+./build.sh
+```
+
+What happens internally:
+```
+docker run --rm \
+    -v $(pwd):/build \          ← mounts 02-custom-binding/ as /build inside container
+    mydev-led-builder \
+    make -C /rpi-linux \        ← uses the kernel source baked into the image
+        ARCH=arm64 \
+        CROSS_COMPILE=aarch64-linux-gnu- \
+        M=/build \              ← compiles the module from /build (= your local dir)
+        modules
+```
+
+The `-v $(pwd):/build` mount is why output files appear in your local directory
+after the container exits — Docker writes them into the mounted folder.
+
+### Verify the output locally
+
+```bash
+ls -lh 02-custom-binding/
+# mydev-led-driver.ko   ← kernel module ready to deploy
+# mydev-led-driver.o    ← intermediate object (not needed on Pi)
+# Module.symvers        ← symbol table (not needed on Pi)
+# modules.order         ← load order hint (not needed on Pi)
+```
+
+### Clean build artifacts
+
+```bash
+./build.sh clean
+```
+
+---
+
+## Step 3 — Copy Files to the Pi
 
 ```bash
 # Replace <pi-ip> with your Pi's IP address
@@ -37,13 +89,13 @@ ls -lh mydev-led.dtbo
 # Copy the overlay to the Pi's overlays directory
 scp mydev-led.dtbo pi@<pi-ip>:/boot/firmware/overlays/
 
-# Copy the driver source + Makefile to the Pi
-scp mydev-led-driver.c Makefile pi@<pi-ip>:~/mydev-led/
+# Copy only the .ko — no need to copy source or Makefile
+scp mydev-led-driver.ko pi@<pi-ip>:~/
 ```
 
 ---
 
-## Step 3 — Enable the Overlay on the Pi
+## Step 4 — Enable the Overlay on the Pi (reboot required)
 
 SSH into the Pi:
 ```bash
@@ -73,36 +125,10 @@ cat /proc/device-tree/mydev@0/label && echo
 
 ---
 
-## Step 4 — Build the Kernel Module on the Pi
-
-```bash
-# Install kernel headers (one-time)
-sudo apt update
-sudo apt install -y linux-headers-$(uname -r)
-
-# Build the module
-cd ~/mydev-led
-make
-
-# Expected output:
-# make -C /lib/modules/6.6.x-rpi.../build M=... modules
-#   CC [M]  mydev-led-driver.o
-#   MODPOST modules.list
-#   LD [M]  mydev-led-driver.ko
-```
-
-Verify:
-```bash
-ls -lh mydev-led-driver.ko
-# -rw-r--r-- 1 pi pi 5.x mydev-led-driver.ko
-```
-
----
-
 ## Step 5 — Load the Module
 
 ```bash
-sudo insmod mydev-led-driver.ko
+sudo insmod ~/mydev-led-driver.ko
 ```
 
 Check dmesg for the probe message:

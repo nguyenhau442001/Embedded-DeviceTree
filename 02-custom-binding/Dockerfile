@@ -42,10 +42,13 @@ RUN make -C /rpi-linux \
     CROSS_COMPILE=aarch64-linux-gnu- \
     bcm2711_defconfig
 
+# modules_prepare alone does not generate Module.symvers — we need a full
+# modules build so all kernel symbol references resolve when building
+# out-of-tree modules.
 RUN make -C /rpi-linux \
     ARCH=arm64 \
     CROSS_COMPILE=aarch64-linux-gnu- \
     -j$(nproc) \
-    modules_prepare
+    modules
 
 WORKDIR /build
